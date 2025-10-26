@@ -1,0 +1,55 @@
+{
+  "name": "brand-intelligence-api-v3",
+  "version": "3.0.0",
+  "description": "Production-ready Brand Intelligence API with PostgreSQL, Redis, and Playwright scraping",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "NODE_ENV=development nodemon src/server.js",
+    "db:migrate": "node src/db/migrate.js",
+    "db:cleanup": "node src/db/cleanup.js",
+    "test": "jest --coverage",
+    "test:unit": "jest tests/unit --coverage",
+    "test:integration": "jest tests/integration",
+    "lint": "eslint src/**/*.js",
+    "format": "prettier --write src/**/*.js"
+  },
+  "keywords": [
+    "brand-intelligence",
+    "web-scraping",
+    "openai",
+    "postgresql",
+    "redis",
+    "playwright"
+  ],
+  "author": "Brand Intelligence Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "dependencies": {
+    "@fastify/cors": "^8.5.0",
+    "@fastify/helmet": "^11.1.1",
+    "@fastify/rate-limit": "^9.1.0",
+    "ajv": "^8.12.0",
+    "dotenv": "^16.3.1",
+    "fastify": "^4.25.2",
+    "ioredis": "^5.3.2",
+    "openai": "^4.24.1",
+    "pg": "^8.11.3",
+    "pino": "^8.17.2",
+    "pino-pretty": "^10.3.1",
+    "playwright": "^1.40.1",
+    "prom-client": "^15.1.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.6",
+    "eslint": "^8.56.0",
+    "jest": "^29.7.0",
+    "nodemon": "^3.0.2",
+    "prettier": "^3.1.1",
+    "supertest": "^6.3.3"
+  }
+}
