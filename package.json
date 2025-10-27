@@ -5,6 +5,7 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
+    "demo": "node src/server-demo.js",
     "dev": "NODE_ENV=development nodemon src/server.js",
     "db:migrate": "node src/db/migrate.js",
     "db:cleanup": "node src/db/cleanup.js",
