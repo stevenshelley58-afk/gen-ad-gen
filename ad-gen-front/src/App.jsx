@@ -5,6 +5,7 @@ import Processing from './components/Processing';
 import BrandSummary from './components/BrandSummary';
 import ComingSoon from './components/ComingSoon';
 import { analyzeBrand } from './lib/api';
+import { generateBrandCard } from './lib/utils';
 
 const STATES = {
   INPUT: 'input',
@@ -23,30 +24,40 @@ function App() {
     setBrandUrl(url);
     setCurrentState(STATES.PROCESSING);
     setError(null);
+    setBrandData(null);
 
     try {
       const data = await analyzeBrand(url);
-      setBrandData(data);
+      const nextData = {
+        ...data,
+        brand_card: data.brand_card || generateBrandCard(data.brand),
+      };
+      setBrandData(nextData);
       setCurrentState(STATES.SUMMARY);
     } catch (err) {
       console.error('Error analyzing brand:', err);
-      setError(err.response?.data?.message || 'Failed to analyze brand. Please try again.');
+      const fallbackMessage = err.response?.data?.message || err.message || 'Failed to analyze brand. Please try again.';
+      setError(fallbackMessage);
       setCurrentState(STATES.INPUT);
     }
   };
 
-  const handleEdit = (editedData) => {
-    setBrandData(prev => ({
-      ...prev,
-      brand: {
-        ...prev.brand,
-        ...editedData
-      }
-    }));
+  const handleEdit = (editedBrand, updatedCard) => {
+    setBrandData((prev) => {
+      if (!prev) return prev;
+      const mergedBrand = { ...prev.brand, ...editedBrand };
+      return {
+        ...prev,
+        brand: mergedBrand,
+        brand_card: updatedCard || generateBrandCard(mergedBrand),
+      };
+    });
   };
 
-  const handleApprove = (finalData) => {
-    console.log('Approved brand data:', finalData);
+  const handleApprove = (finalBrand, finalCard) => {
+    const card = finalCard || generateBrandCard(finalBrand);
+    console.log('Approved brand data:', finalBrand);
+    setBrandData((prev) => (prev ? { ...prev, brand: finalBrand, brand_card: card } : prev));
     setCurrentState(STATES.APPROVED);
   };
 
@@ -63,11 +74,11 @@ function App() {
         {currentState === STATES.INPUT && (
           <BrandInput key="input" onSubmit={handleBrandSubmit} />
         )}
-        
+
         {currentState === STATES.PROCESSING && (
           <Processing key="processing" brandUrl={brandUrl} />
         )}
-        
+
         {currentState === STATES.SUMMARY && brandData && (
           <BrandSummary
             key="summary"
@@ -76,9 +87,13 @@ function App() {
             onApprove={handleApprove}
           />
         )}
-        
+
         {currentState === STATES.APPROVED && (
-          <ComingSoon key="approved" onNewAnalysis={handleNewAnalysis} />
+          <ComingSoon
+            key="approved"
+            brand={brandData?.brand}
+            onNewAnalysis={handleNewAnalysis}
+          />
         )}
       </AnimatePresence>
 
